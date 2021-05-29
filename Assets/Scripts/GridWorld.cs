@@ -91,7 +91,7 @@ public class GridWorld : MonoBehaviour
                     var n = getLiveNeighbours(GridElements, x, y);
                     if (n < 2)
                     {
-                        print($"killing ({x},{y})");
+                        //print($"killing ({x},{y})");
                         nextGen[x, y] = false;
                     }
                     else if (n == 2 || n == 3)
@@ -106,7 +106,7 @@ public class GridWorld : MonoBehaviour
 
                     if (getLiveNeighbours(GridElements, x, y) == 3)
                     {
-                        print($"live: ({x},{y})");
+                      //  print($"live: ({x},{y})");
 
                         nextGen[x, y] = true;
 

@@ -20,12 +20,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4d69ef6cce45e3340bc4bb1eaca93533, type: 2}
   m_DefaultRendererIndex: 0
   m_RequireDepthTexture: 0
-  m_RequireOpaqueTexture: 0
+  m_RequireOpaqueTexture: 1
   m_OpaqueDownsampling: 1
   m_SupportsTerrainHoles: 1
   m_SupportsHDR: 1
   m_MSAA: 1
-  m_RenderScale: 2
+  m_RenderScale: 1
   m_MainLightRenderingMode: 1
   m_MainLightShadowsSupported: 0
   m_MainLightShadowmapResolution: 2048

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,18 +6,25 @@ public class GridDisplay : MonoBehaviour
 
     public GridWorld world;
 
+    public Transform BackgroundGrid;
+
+
     public bool[,] grid;
 
-    [SerializeField]
-    GameObject cell;
+    public CellPool cellPool;
 
     [SerializeField]
-    GameObject dead;
 
     GameObject[,] cells;
-    GameObject[,] deads;
 
     Controls controls;
+
+
+    public float SimsPerSecond = 5;
+
+    private float secsPerSim => 1 / SimsPerSecond;
+
+    float timeUntilNextSim;
 
     bool Started;
 
@@ -28,42 +33,43 @@ public class GridDisplay : MonoBehaviour
 
         grid = new bool[world.Size.x, world.Size.y];
 
-        controls = new Controls();
-
-        controls.Enable();
-
-        controls.InGame.Enable();
+        controls = InputManager.Instance.InputControls;
 
         controls.InGame.Tap.performed += tap_performed;
 
-        StartSim();
+        cells = new GameObject[world.Size.x, world.Size.y];
+
+        //StartSim();
+
+        SetUpBg();
+    }
+
+
+    private void SetUpBg()
+    {
+        BackgroundGrid.localScale = new Vector3(world.Size.x, world.Size.y);
+        BackgroundGrid.gameObject.GetComponent<Renderer>().material.mainTextureScale = world.Size;
     }
 
     public void StartSim()
     {
         world.SimulationInit(grid);
-        cells = new GameObject[world.Size.x, world.Size.y];
-        deads = new GameObject[world.Size.x, world.Size.y];
-        for (int x = 0; x < world.Size.x; x++)
-        {
-            for (int y = 0; y < world.Size.y; y++)
-            {
-                cells[x, y] = Instantiate(cell, new Vector3(x, y, 0), cell.transform.rotation);
-                cells[x, y].SetActive(world.GetElement(x, y));
+        timeUntilNextSim = 0;
 
-                deads[x, y] = Instantiate(dead, new Vector3(x, y, 0), dead.transform.rotation);
-                deads[x, y].SetActive(!world.GetElement(x, y));
-            }
-
-        }
         Started = true;
+    }
+    public void StopSim()
+    {
+        grid = world.GridElements;
+        Started = false;
     }
 
     private void tap_performed(InputAction.CallbackContext obj)
     {
+
         Vector2 inp = controls.InGame.PointerPosition.ReadValue<Vector2>();
 
-        inp = Camera.main.ScreenToWorldPoint(new Vector3(inp.x,inp.y));
+        inp = Camera.main.ScreenToWorldPoint(new Vector3(inp.x, inp.y));
 
         Vector2Int vInt = new Vector2Int(Mathf.RoundToInt(inp.x), Mathf.RoundToInt(inp.y));
 
@@ -74,29 +80,59 @@ public class GridDisplay : MonoBehaviour
         if (vInt.x < 0 || vInt.y < 0)
             return;
         grid[vInt.x, vInt.y] = !grid[vInt.x, vInt.y];
-        world.SetElement(vInt.x, vInt.y, grid[vInt.x, vInt.y]);
+        if(Started)
+            world.SetElement(vInt.x, vInt.y, grid[vInt.x, vInt.y]);
     }
 
     private void Update()
     {
-        if (Keyboard.current.xKey.wasReleasedThisFrame)
+        if (Started)
         {
-            print("Update");
-            world.SimulationUpdate();
+            timeUntilNextSim -= Time.deltaTime;
 
-            
+            if (timeUntilNextSim <= 0)
+            {
+                world.SimulationUpdate();
+                timeUntilNextSim = secsPerSim;
+            }
+            if (Keyboard.current.xKey.wasReleasedThisFrame)
+            {
+                print("Stop");
+                StopSim();
+            }
+        }
+        else if (Keyboard.current.xKey.wasReleasedThisFrame)
+        {
+            print("Start");
+            StartSim();
         }
 
-
-        for (int x = 0; x < world.Size.x; x++)
-        {
-            for (int y = 0; y < world.Size.y; y++)
+        var maxX = Started ? world.Size.x : grid.GetLength(0);
+        var maxY = Started ? world.Size.y : grid.GetLength(1);
+        for (int x = 0; x < maxX; x++)
+            for (int y = 0; y < maxY; y++)
             {
-                cells[x, y].SetActive(world.GetElement(x, y));
-                deads[x, y].SetActive(!world.GetElement(x, y));
+                var element = Started ? world.GetElement(x, y) : grid[x, y];
+
+                if (element && cells[x, y] == null)
+                {
+                    cells[x, y] = cellPool.GetCell();
+                    cells[x, y].transform.position = new Vector3(x, y);
+                }
+                else if (!element)
+                {
+                    if (cells[x, y] != null)
+                    {
+                        cellPool.HideCell(cells[x, y]);
+                        cells[x, y] = null;
+                    }
+                }
             }
 
-        }
+
+
+
+
 
     }
 
