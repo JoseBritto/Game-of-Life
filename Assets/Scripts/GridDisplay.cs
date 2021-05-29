@@ -49,6 +49,8 @@ public class GridDisplay : MonoBehaviour
     {
         BackgroundGrid.localScale = new Vector3(world.Size.x, world.Size.y);
         BackgroundGrid.gameObject.GetComponent<Renderer>().material.mainTextureScale = world.Size;
+        BackgroundGrid.position = new Vector3(Mathf.Floor(BackgroundGrid.localScale.x / 2), Mathf.Floor(BackgroundGrid.localScale.y / 2));
+        Camera.main.transform.position = new Vector3(BackgroundGrid.transform.position.x, BackgroundGrid.transform.position.y, Camera.main.transform.position.z);
     }
 
     public void StartSim()
@@ -92,7 +94,16 @@ public class GridDisplay : MonoBehaviour
 
             if (timeUntilNextSim <= 0)
             {
-                world.SimulationUpdate();
+                int i = Mathf.FloorToInt(timeUntilNextSim / secsPerSim);
+                i = Mathf.Abs(i);
+                if (i <= 0)
+                    world.SimulationUpdate();
+                else
+                    while(i > 0)
+                    {
+                        world.SimulationUpdate();
+                        i--;
+                    }
                 timeUntilNextSim = secsPerSim;
             }
             if (Keyboard.current.xKey.wasReleasedThisFrame)

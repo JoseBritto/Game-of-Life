@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridWorld : MonoBehaviour
+public class GridWorldV2 : MonoBehaviour
 {
     [SerializeField]
     private Vector2Int size = new Vector2Int(10, 10);
@@ -46,7 +46,7 @@ public class GridWorld : MonoBehaviour
 
     public void SetElement(int x, int y, bool value)
     {
-        if(GridElements.GetLength(0) <= x || GridElements.GetLength(1) <= y)
+        if (GridElements.GetLength(0) <= x || GridElements.GetLength(1) <= y)
         {
             Debug.LogError("Index out of bounds for GridElements");
             return;
@@ -69,7 +69,7 @@ public class GridWorld : MonoBehaviour
 
     public void SimulationInit(bool[,] grid = null)
     {
-        if(grid == null)
+        if (grid == null)
         {
             GridElements = new bool[size.x, size.y];
             return;
@@ -85,7 +85,7 @@ public class GridWorld : MonoBehaviour
         {
             for (int y = 0; y < GridElements.GetLength(1); y++)
             {
-                if(GridElements[x,y])//cell is alive
+                if (GridElements[x, y])//cell is alive
                 {
                     var n = getLiveNeighbours(GridElements, x, y);
                     if (n < 2)
@@ -99,11 +99,11 @@ public class GridWorld : MonoBehaviour
                         nextGen[x, y] = false;
                 }
                 else  //cell is dead
-                {      
+                {
 
                     if (getLiveNeighbours(GridElements, x, y) == 3)
                     {
-                      //  print($"live: ({x},{y})");
+                        //  print($"live: ({x},{y})");
                         nextGen[x, y] = true;
 
                     }
@@ -118,13 +118,13 @@ public class GridWorld : MonoBehaviour
         GridElements = nextGen;
     }
 
-   
+
 
     private int getLiveNeighbours(bool[,] elements, int i, int j)
     {
         var rowLimit = elements.GetLength(0) - 1;
         var columnLimit = elements.GetLength(1) - 1;
-        
+
         int liveNeighbours = 0;
 
         for (var x = Math.Max(0, i - 1); x <= Math.Min(i + 1, rowLimit); x++)

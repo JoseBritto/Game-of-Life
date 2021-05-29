@@ -41,6 +41,14 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""9d725632-3ba2-4ae0-a84d-f2828750618e"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -98,6 +106,171 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""action"": ""Scroll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""WASD"",
+                    ""id"": ""69c79465-cb08-4e18-9022-314f4bd8018b"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""bf899578-bffb-480d-9474-de453ce41391"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""0624ace7-06cb-4cc5-b47f-88057cc5c21f"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""1bfbad22-b3b8-419a-8c42-a3261840002f"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""b312ab43-c86f-4f02-b09d-49f5129feed1"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Arrows"",
+                    ""id"": ""4049607c-86f5-4c6b-ba23-85a799cb7157"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""0baa86b8-a9e8-4abf-9919-37217d60b3fb"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""ef0950af-6e3b-4a5b-89f8-5e04b1a692a4"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""34a9875e-2b15-4ecd-9723-e9747fff5c9d"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""45f1f19a-fcb2-4412-93bf-02f02bda717e"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Numpad"",
+                    ""id"": ""f8d5f3b3-a01a-4259-b2b0-216477e466b4"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""fe7c996e-646a-4ff9-b0b6-6045b3120d00"",
+                    ""path"": ""<Keyboard>/numpad8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""a7b7881d-0be7-4f3d-be26-5887dfe9fa47"",
+                    ""path"": ""<Keyboard>/numpad2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""15454917-29d4-467e-8414-5b5ebd04c0c7"",
+                    ""path"": ""<Keyboard>/numpad4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""ba80c68b-326e-476d-b188-4d3a0c8cf9ce"",
+                    ""path"": ""<Keyboard>/numpad6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -621,6 +794,7 @@ public class @Controls : IInputActionCollection, IDisposable
         m_InGame_Tap = m_InGame.FindAction("Tap", throwIfNotFound: true);
         m_InGame_PointerPosition = m_InGame.FindAction("PointerPosition", throwIfNotFound: true);
         m_InGame_Scroll = m_InGame.FindAction("Scroll", throwIfNotFound: true);
+        m_InGame_Move = m_InGame.FindAction("Move", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -687,6 +861,7 @@ public class @Controls : IInputActionCollection, IDisposable
     private readonly InputAction m_InGame_Tap;
     private readonly InputAction m_InGame_PointerPosition;
     private readonly InputAction m_InGame_Scroll;
+    private readonly InputAction m_InGame_Move;
     public struct InGameActions
     {
         private @Controls m_Wrapper;
@@ -694,6 +869,7 @@ public class @Controls : IInputActionCollection, IDisposable
         public InputAction @Tap => m_Wrapper.m_InGame_Tap;
         public InputAction @PointerPosition => m_Wrapper.m_InGame_PointerPosition;
         public InputAction @Scroll => m_Wrapper.m_InGame_Scroll;
+        public InputAction @Move => m_Wrapper.m_InGame_Move;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -712,6 +888,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Scroll.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnScroll;
                 @Scroll.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnScroll;
                 @Scroll.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnScroll;
+                @Move.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnMove;
+                @Move.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnMove;
+                @Move.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnMove;
             }
             m_Wrapper.m_InGameActionsCallbackInterface = instance;
             if (instance != null)
@@ -725,6 +904,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Scroll.started += instance.OnScroll;
                 @Scroll.performed += instance.OnScroll;
                 @Scroll.canceled += instance.OnScroll;
+                @Move.started += instance.OnMove;
+                @Move.performed += instance.OnMove;
+                @Move.canceled += instance.OnMove;
             }
         }
     }
@@ -864,6 +1046,7 @@ public class @Controls : IInputActionCollection, IDisposable
         void OnTap(InputAction.CallbackContext context);
         void OnPointerPosition(InputAction.CallbackContext context);
         void OnScroll(InputAction.CallbackContext context);
+        void OnMove(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
