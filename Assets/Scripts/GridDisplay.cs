@@ -1,10 +1,12 @@
+using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class GridDisplay : MonoBehaviour
 {
 
-    public GridWorld world;
+    public GridWorldV2 world;
 
     public Transform BackgroundGrid;
 
@@ -27,11 +29,22 @@ public class GridDisplay : MonoBehaviour
     float timeUntilNextSim;
 
     bool Started;
+    [SerializeField]
+    bool randomGrid;
+    [SerializeField]
+    int seed;
+
+    bool canStart = true;
 
     public void Start()
     {
+        
+        world = GetComponent<GridWorldV2>();
 
         grid = new bool[world.Size.x, world.Size.y];
+
+        if (randomGrid)
+            StartCoroutine(GenerateGrid());
 
         controls = InputManager.Instance.InputControls;
 
@@ -42,6 +55,27 @@ public class GridDisplay : MonoBehaviour
         //StartSim();
 
         SetUpBg();
+    }
+
+    IEnumerator GenerateGrid()
+    {
+        canStart = false;
+
+        System.Random rand;
+        if (seed != 0)
+            rand = new System.Random(seed);
+        else
+            rand = new System.Random();
+
+        for (int i = 0; i < grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < grid.GetLength(1); j++)
+            {
+                grid[i, j] = rand.Next(0, 2) == 1;
+            }
+            yield return null;
+        }
+        canStart = true;
     }
 
 
@@ -60,15 +94,14 @@ public class GridDisplay : MonoBehaviour
 
         Started = true;
     }
-    public void StopSim()
+    public void PauseSim()
     {
-        grid = world.GridElements;
+        grid = world.GetElementsAsArray();
         Started = false;
     }
 
     private void tap_performed(InputAction.CallbackContext obj)
     {
-
         Vector2 inp = controls.InGame.PointerPosition.ReadValue<Vector2>();
 
         inp = Camera.main.ScreenToWorldPoint(new Vector3(inp.x, inp.y));
@@ -82,6 +115,7 @@ public class GridDisplay : MonoBehaviour
         if (vInt.x < 0 || vInt.y < 0)
             return;
         grid[vInt.x, vInt.y] = !grid[vInt.x, vInt.y];
+
         if(Started)
             world.SetElement(vInt.x, vInt.y, grid[vInt.x, vInt.y]);
     }
@@ -94,28 +128,30 @@ public class GridDisplay : MonoBehaviour
 
             if (timeUntilNextSim <= 0)
             {
-                int i = Mathf.FloorToInt(timeUntilNextSim / secsPerSim);
-                i = Mathf.Abs(i);
-                if (i <= 0)
+                int i = (int) (Time.deltaTime / secsPerSim);
+                do
+                {
                     world.SimulationUpdate();
-                else
-                    while(i > 0)
-                    {
-                        world.SimulationUpdate();
-                        i--;
-                    }
+                    i--;
+                } while (i > 0);
+
                 timeUntilNextSim = secsPerSim;
             }
             if (Keyboard.current.xKey.wasReleasedThisFrame)
             {
                 print("Stop");
-                StopSim();
+                PauseSim();
             }
         }
         else if (Keyboard.current.xKey.wasReleasedThisFrame)
         {
-            print("Start");
-            StartSim();
+            if (canStart)
+            {
+                print("Start");
+                StartSim();
+            }
+            else
+                print("Wait for world generation!!");
         }
 
         var maxX = Started ? world.Size.x : grid.GetLength(0);

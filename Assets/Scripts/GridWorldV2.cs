@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GridWorldV2 : MonoBehaviour
@@ -8,137 +8,252 @@ public class GridWorldV2 : MonoBehaviour
     [SerializeField]
     private Vector2Int size = new Vector2Int(10, 10);
 
-    public bool[,] GridElements { get; private set; }
-
     public Vector2Int Size => size;
 
+    private HashSet<int> liveCells;
 
-    public void SetGridSize(Vector2Int newSize)
+    private int size1D;
+    public void SimulationInit(bool[,] grid)
     {
-
-        if (newSize == size)
-            return;
-        size = newSize;
-        UpdateGridSize();
-    }
-
-    public void UpdateGridSize()
-    {
-        if (GridElements.Length == (size.x * size.y))
-            return;
-
-        int xLength = Math.Min(GridElements.GetLength(0), size.x);
-
-        int yLength = Math.Min(GridElements.GetLength(1), size.y);
-
-        var newGrid = new bool[size.x, size.y];
-
-        for (int x = 0; x < xLength; x++)
+        size = new Vector2Int(grid.GetLength(0), grid.GetLength(1));
+        size1D = size.x * size.y;
+        
+        liveCells = new HashSet<int>();
+        for (int i = 0; i < grid.GetLength(0); i++)
         {
-            for (int y = 0; y < yLength; y++)
+            for (int j = 0; j < grid.GetLength(1); j++)
             {
-                newGrid[x, y] = GridElements[x, y];
+                if (grid[i, j])
+                    liveCells.Add(to1D(i, j));
             }
         }
-
-        GridElements = newGrid;
     }
 
     public void SetElement(int x, int y, bool value)
     {
-        if (GridElements.GetLength(0) <= x || GridElements.GetLength(1) <= y)
+        var pos = to1D(x, y);
+        
+        if (pos < 0 || pos >= size1D)
+            return;
+
+        if (value)
+            liveCells.Add(pos);
+        else
+            liveCells.Remove(pos);
+    }
+
+/*
+
+    public void SetElement(int i, bool value)
+    {
+        if (i >= gridElements.Length)
         {
             Debug.LogError("Index out of bounds for GridElements");
             return;
         }
 
-        GridElements[x, y] = value;
+        changed.Add(i);
+
+        gridElements[i] = value;
+    }*/
+
+    public bool[,] GetElementsAsArray()
+    {
+        var array = new bool[Size.x, Size.y];
+
+        for (int i = 0; i < Size.x; i++)
+        {
+            for (int j = 0; j < Size.y; j++)
+            {
+                array[i, j] = liveCells.Contains(to1D(i, j));
+            }
+        }
+
+        return array;
     }
 
     public bool GetElement(int x, int y)
     {
-        if (GridElements.GetLength(0) <= x || GridElements.GetLength(1) <= y)
-        {
-            Debug.LogError("Index out of bounds for GridElements");
-            return false;
-        }
-
-        return GridElements[x, y];
-
+        return liveCells.Contains(to1D(x,y));
     }
 
-    public void SimulationInit(bool[,] grid = null)
-    {
-        if (grid == null)
-        {
-            GridElements = new bool[size.x, size.y];
-            return;
-        }
-        size = new Vector2Int(grid.GetLength(0), grid.GetLength(1));
-        GridElements = grid;
-    }
+
+
     public void SimulationUpdate()
     {
-        var nextGen = new bool[GridElements.GetLength(0), GridElements.GetLength(1)];
+        var temp = new HashSet<int>();
 
-        for (int x = 0; x < GridElements.GetLength(0); x++)
+       
+        foreach (var cell in liveCells)
         {
-            for (int y = 0; y < GridElements.GetLength(1); y++)
-            {
-                if (GridElements[x, y])//cell is alive
-                {
-                    var n = getLiveNeighbours(GridElements, x, y);
-                    if (n < 2)
-                    {
-                        //print($"killing ({x},{y})");
-                        nextGen[x, y] = false;
-                    }
-                    else if (n == 2 || n == 3)
-                        nextGen[x, y] = true;
-                    else
-                        nextGen[x, y] = false;
-                }
-                else  //cell is dead
-                {
+            int liveNeibours = getAndUpdateNeibours(cell, temp, true);
 
-                    if (getLiveNeighbours(GridElements, x, y) == 3)
-                    {
-                        //  print($"live: ({x},{y})");
-                        nextGen[x, y] = true;
-
-                    }
-                    else
-                        nextGen[x, y] = false;
-
-                }
-            }
+            if (!shouldDie(liveNeibours))
+                temp.Add(cell);
         }
 
-
-        GridElements = nextGen;
+        liveCells = temp;
     }
 
-
-
-    private int getLiveNeighbours(bool[,] elements, int i, int j)
+    private int getAndUpdateNeibours(int cell, HashSet<int> temp, bool updateDead)
     {
-        var rowLimit = elements.GetLength(0) - 1;
-        var columnLimit = elements.GetLength(1) - 1;
+        int live = 0;
 
-        int liveNeighbours = 0;
-
-        for (var x = Math.Max(0, i - 1); x <= Math.Min(i + 1, rowLimit); x++)
+        //Left
+        if (liveCells.Contains(cell - 1))
+            live++;
+        else if (updateDead)
         {
-            for (var y = Math.Max(0, j - 1); y <= Math.Min(j + 1, columnLimit); y++)
-            {
-                if (x != i || y != j)
-                {
-                    if (elements[x, y])
-                        liveNeighbours++;
-                }
-            }
+            update(cell - 1);
         }
 
-        return liveNeighbours;
+        //Rigit
+        if (liveCells.Contains(cell + 1))
+            live++;
+        else if (updateDead)
+        {
+            update(cell + 1);
+        }
+
+        //Top
+        if (liveCells.Contains(cell - Size.x))
+            live++;
+        else if (updateDead)
+        {
+            update(cell - Size.x);
+        }
+
+        //Top Left
+        if (liveCells.Contains(cell - Size.x - 1))
+            live++;
+        else if (updateDead)
+        {
+            update(cell - Size.x - 1);
+        }
+
+        //Top Rigt
+        if (liveCells.Contains(cell - Size.x + 1))
+            live++;
+        else if (updateDead)
+        {
+            update(cell - Size.x + 1);
+        }
+
+        //Bottom
+        if (liveCells.Contains(cell + Size.x))
+            live++;
+        else if (updateDead)
+        {
+            update(cell + Size.x);
+        }
+
+        //Bottom Left
+        if (liveCells.Contains(cell + Size.x - 1))
+            live++;
+        else if (updateDead)
+        {
+             update(cell + Size.x - 1);
+        }
+
+        //Bottom Right
+        if (liveCells.Contains(cell + Size.x + 1))
+            live++;
+        else if (updateDead)
+        {
+             update(cell + Size.x + 1);
+        }
+
+        return live;
+
+        void update(int cellPos)
+        {
+            if (cellPos >= size1D || cell < 0)
+                return;
+
+            if (shouldBecomeAlive(getAndUpdateNeibours(cellPos, temp, false)))
+            {
+                temp.Add(cellPos);
+            }
+        }
     }
+
+    private bool shouldDie(int liveNeibours)
+    {
+        //Over or underpopulation
+        if (liveNeibours > 3 || liveNeibours < 2)
+            return true;
+
+        return false;
+    }
+
+    private bool shouldBecomeAlive(int liveNeibours)
+    {
+        return liveNeibours == 3;
+    }
+   
+
+    private int to1D(int x, int y) => x + (size.x * y);
+
+   
+
+    /* private int getLiveNeighbours(int i, out List<int> neibours)
+     {
+         int live = 0;
+
+         neibours = new List<int>();
+
+         if (i > 0)
+         {
+             neibours.Add(i - 1);
+             if (gridElements[i - 1]) live++; //Left
+
+             if (i - size.x + 1 >= 0)
+             {
+                 neibours.Add(i - size.x + 1);
+                 if (gridElements[i - size.x + 1]) live++; //Upper Right Diag
+
+                 if (i - size.x >= 0)
+                 {
+                     neibours.Add(i - size.x);
+                     if (gridElements[i - size.x]) live++; //Above
+
+                     if (i - size.x - 1 >= 0)
+                     {
+                         neibours.Add(i - size.x - 1);
+                         if (gridElements[i - size.x - 1]) live++;  //Upper Left Diag
+                     }
+                 }
+             }
+         }
+
+
+         if (i < gridElements.Length - 1)
+         {
+             neibours.Add(i + 1);
+             if (gridElements[i + 1]) live++; //Right
+
+
+             if (i + size.x - 1 < gridElements.Length)
+             {
+                 neibours.Add(i + size.x - 1);
+                 if (gridElements[i + size.x - 1]) live++; //Lower Left Diag
+
+                 if (i + size.x < gridElements.Length)
+                 {
+                     neibours.Add(i + size.x);
+                     if (gridElements[i + size.x]) live++; //Below
+
+                     if (i + size.x + 1 < gridElements.Length)
+                     {
+                         neibours.Add(i + size.x + 1);
+                         if (gridElements[i + size.x + 1]) live++; //Lower Right Diag
+                     }
+                 }
+             }
+         }
+
+         return live;
+     }*/
+
+    
 }

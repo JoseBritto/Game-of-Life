@@ -350,6 +350,7 @@ GameObject:
   - component: {fileID: 473747584}
   - component: {fileID: 473747586}
   - component: {fileID: 473747587}
+  - component: {fileID: 473747588}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -396,10 +397,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a263b03db08be40998492f1cc1c12c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  world: {fileID: 473747584}
+  world: {fileID: 0}
   BackgroundGrid: {fileID: 864559334}
   cellPool: {fileID: 66685998}
-  SimsPerSecond: 60
+  SimsPerSecond: 2
+  randomGrid: 1
+  seed: 0
 --- !u!114 &473747587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417,6 +420,19 @@ MonoBehaviour:
   MinCamSize: 5
   MaxCamSize: 1000
   DefaultCamSize: 50
+--- !u!114 &473747588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473747583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1a16457f1e2ba74da92a273c9bfa493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: {x: 501, y: 501}
 --- !u!1 &503024652
 GameObject:
   m_ObjectHideFlags: 0

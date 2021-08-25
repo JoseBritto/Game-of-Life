@@ -8,7 +8,7 @@ public class GridWorld : MonoBehaviour
     [SerializeField]
     private Vector2Int size = new Vector2Int(10, 10);
 
-    public bool[,] GridElements { get; private set; }
+    private bool[,] gridElements;
 
     public Vector2Int Size => size;
 
@@ -24,12 +24,12 @@ public class GridWorld : MonoBehaviour
 
     public void UpdateGridSize()
     {
-        if (GridElements.Length == (size.x * size.y))
+        if (gridElements.Length == (size.x * size.y))
             return;
 
-        int xLength = Math.Min(GridElements.GetLength(0), size.x);
+        int xLength = Math.Min(gridElements.GetLength(0), size.x);
 
-        int yLength = Math.Min(GridElements.GetLength(1), size.y);
+        int yLength = Math.Min(gridElements.GetLength(1), size.y);
 
         var newGrid = new bool[size.x, size.y];
 
@@ -37,33 +37,33 @@ public class GridWorld : MonoBehaviour
         {
             for (int y = 0; y < yLength; y++)
             {
-                newGrid[x, y] = GridElements[x, y];
+                newGrid[x, y] = gridElements[x, y];
             }
         }
 
-        GridElements = newGrid;
+        gridElements = newGrid;
     }
 
     public void SetElement(int x, int y, bool value)
     {
-        if(GridElements.GetLength(0) <= x || GridElements.GetLength(1) <= y)
+        if(gridElements.GetLength(0) <= x || gridElements.GetLength(1) <= y)
         {
             Debug.LogError("Index out of bounds for GridElements");
             return;
         }
 
-        GridElements[x, y] = value;
+        gridElements[x, y] = value;
     }
 
     public bool GetElement(int x, int y)
     {
-        if (GridElements.GetLength(0) <= x || GridElements.GetLength(1) <= y)
+        if (gridElements.GetLength(0) <= x || gridElements.GetLength(1) <= y)
         {
             Debug.LogError("Index out of bounds for GridElements");
             return false;
         }
 
-        return GridElements[x, y];
+        return gridElements[x, y];
 
     }
 
@@ -71,23 +71,23 @@ public class GridWorld : MonoBehaviour
     {
         if(grid == null)
         {
-            GridElements = new bool[size.x, size.y];
+            gridElements = new bool[size.x, size.y];
             return;
         }
         size = new Vector2Int(grid.GetLength(0), grid.GetLength(1));
-        GridElements = grid;
+        gridElements = grid;
     }
     public void SimulationUpdate()
     {
-        var nextGen = new bool[GridElements.GetLength(0), GridElements.GetLength(1)];
+        var nextGen = new bool[gridElements.GetLength(0), gridElements.GetLength(1)];
 
-        for (int x = 0; x < GridElements.GetLength(0); x++)
+        for (int x = 0; x < gridElements.GetLength(0); x++)
         {
-            for (int y = 0; y < GridElements.GetLength(1); y++)
+            for (int y = 0; y < gridElements.GetLength(1); y++)
             {
-                if(GridElements[x,y])//cell is alive
+                if(gridElements[x,y])//cell is alive
                 {
-                    var n = getLiveNeighbours(GridElements, x, y);
+                    var n = getLiveNeighbours(gridElements, x, y);
                     if (n < 2)
                     {
                         //print($"killing ({x},{y})");
@@ -101,7 +101,7 @@ public class GridWorld : MonoBehaviour
                 else  //cell is dead
                 {      
 
-                    if (getLiveNeighbours(GridElements, x, y) == 3)
+                    if (getLiveNeighbours(gridElements, x, y) == 3)
                     {
                       //  print($"live: ({x},{y})");
                         nextGen[x, y] = true;
@@ -115,7 +115,7 @@ public class GridWorld : MonoBehaviour
         }
 
 
-        GridElements = nextGen;
+        gridElements = nextGen;
     }
 
    
@@ -140,5 +140,11 @@ public class GridWorld : MonoBehaviour
         }
 
         return liveNeighbours;
+    }
+
+
+    public bool[,] GetElementsAsArray()
+    {
+        return gridElements;
     }
 }
