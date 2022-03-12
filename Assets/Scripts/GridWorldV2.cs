@@ -81,9 +81,10 @@ public class GridWorldV2 : MonoBehaviour
 
     public void SimulationUpdate()
     {
+        //Optimize this. INstead of newing delete the unneeded cell from the current set.
         var temp = new HashSet<int>();
 
-       
+
         foreach (var cell in liveCells)
         {
             int liveNeibours = getAndUpdateNeibours(cell, temp, true);
@@ -93,6 +94,9 @@ public class GridWorldV2 : MonoBehaviour
         }
 
         liveCells = temp;
+
+
+
     }
 
     private int getAndUpdateNeibours(int cell, HashSet<int> temp, bool updateDead)

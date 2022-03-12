@@ -36,6 +36,8 @@ public class GridDisplay : MonoBehaviour
 
     bool canStart = true;
 
+    public Camera cam;
+
     public void Start()
     {
         
@@ -72,6 +74,7 @@ public class GridDisplay : MonoBehaviour
             for (int j = 0; j < grid.GetLength(1); j++)
             {
                 grid[i, j] = rand.Next(0, 2) == 1;
+               // print("Generating " + i + " " + j);
             }
             yield return null;
         }
@@ -156,8 +159,18 @@ public class GridDisplay : MonoBehaviour
 
         var maxX = Started ? world.Size.x : grid.GetLength(0);
         var maxY = Started ? world.Size.y : grid.GetLength(1);
-        for (int x = 0; x < maxX; x++)
-            for (int y = 0; y < maxY; y++)
+
+        var vertExtent = cam.orthographicSize;
+        var horzExtent = vertExtent * Screen.width / Screen.height;
+
+        var startX = cam.transform.position.x - horzExtent;
+        var endX = cam.transform.position.x + horzExtent;
+
+        var startY = cam.transform.position.y - vertExtent;
+        var endY = cam.transform.position.y + vertExtent;
+
+        for (int x = (int)Mathf.Max(0, startX); x < Mathf.Min(maxX, endX); x++)
+            for (int y = (int)Mathf.Max(0, startY); y < Mathf.Min(maxY, endY); y++)
             {
                 var element = Started ? world.GetElement(x, y) : grid[x, y];
 

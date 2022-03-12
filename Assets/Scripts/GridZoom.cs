@@ -32,11 +32,13 @@ public class GridZoom : MonoBehaviour
 
     private void scroll_performed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
+        float aspectRatio = (float)Screen.width / (float)Screen.height;
+
         var delta = ctx.ReadValue<float>();
 
         var newSize = Camera.orthographicSize + delta * PlatformData.Instance.PlatformScrollMultiplier * Sensitivity;
 
-        newSize = Mathf.Clamp(newSize, MinCamSize, Mathf.Min(MaxCamSize, Mathf.Min(bgGrid.localScale.x , bgGrid.localScale.y) /2 ));
+        newSize = Mathf.Clamp(newSize, MinCamSize, Mathf.Min(MaxCamSize, Mathf.Min(bgGrid.localScale.x / aspectRatio, bgGrid.localScale.y) / 2 ));
 
         Camera.orthographicSize = newSize;
     }
