@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class GridDisplay : MonoBehaviour
 {
 
-    public GridWorldV2 world;
+    public GridWorldV3 world;
 
     public Transform BackgroundGrid;
 
@@ -41,7 +41,7 @@ public class GridDisplay : MonoBehaviour
     public void Start()
     {
         
-        world = GetComponent<GridWorldV2>();
+        world = GetComponent<GridWorldV3>();
 
         grid = new bool[world.Size.x, world.Size.y];
 

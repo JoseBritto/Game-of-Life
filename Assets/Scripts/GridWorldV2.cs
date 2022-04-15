@@ -10,7 +10,12 @@ public class GridWorldV2 : MonoBehaviour
 
     public Vector2Int Size => size;
 
-    private HashSet<int> liveCells;
+    private HashSet<int> liveCells1;
+    private HashSet<int> liveCells2;
+
+    private HashSet<int> livingCells;
+
+    private bool lastUsed2;
 
     private int size1D;
     public void SimulationInit(bool[,] grid)
@@ -18,13 +23,15 @@ public class GridWorldV2 : MonoBehaviour
         size = new Vector2Int(grid.GetLength(0), grid.GetLength(1));
         size1D = size.x * size.y;
         
-        liveCells = new HashSet<int>();
+        liveCells1 = new HashSet<int>();
+        liveCells2 = new HashSet<int>();
+        livingCells = liveCells1;
         for (int i = 0; i < grid.GetLength(0); i++)
         {
             for (int j = 0; j < grid.GetLength(1); j++)
             {
                 if (grid[i, j])
-                    liveCells.Add(to1D(i, j));
+                    livingCells.Add(to1D(i, j));
             }
         }
     }
@@ -37,9 +44,9 @@ public class GridWorldV2 : MonoBehaviour
             return;
 
         if (value)
-            liveCells.Add(pos);
+            livingCells.Add(pos);
         else
-            liveCells.Remove(pos);
+            livingCells.Remove(pos);
     }
 
 /*
@@ -65,7 +72,7 @@ public class GridWorldV2 : MonoBehaviour
         {
             for (int j = 0; j < Size.y; j++)
             {
-                array[i, j] = liveCells.Contains(to1D(i, j));
+                array[i, j] = livingCells.Contains(to1D(i, j));
             }
         }
 
@@ -74,7 +81,7 @@ public class GridWorldV2 : MonoBehaviour
 
     public bool GetElement(int x, int y)
     {
-        return liveCells.Contains(to1D(x,y));
+        return livingCells.Contains(to1D(x,y));
     }
 
 
@@ -82,24 +89,45 @@ public class GridWorldV2 : MonoBehaviour
     public void SimulationUpdate()
     {
         //Optimize this. INstead of newing delete the unneeded cell from the current set.
-        var temp = new HashSet<int>();
-
-
-        foreach (var cell in liveCells)
+        //  var temp = new HashSet<int>();
+        if (lastUsed2)
         {
-            int liveNeibours = getAndUpdateNeibours(cell, temp, true);
+            liveCells1.Clear();
 
-            if (!shouldDie(liveNeibours))
-                temp.Add(cell);
+            foreach (var cell in liveCells2)
+            {
+                int liveNeibours = getAndUpdateNeibours(cell, temp: liveCells1, liveCells: liveCells2, true);
+
+                if (!shouldDie(liveNeibours))
+                    liveCells1.Add(cell);
+            }
+
+            lastUsed2 = false;
+
+            livingCells = liveCells1;
+
+            return;
         }
 
-        liveCells = temp;
+        liveCells2.Clear();
+        
+        foreach (var cell in liveCells1)
+        {
+            int liveNeibours = getAndUpdateNeibours(cell, temp: liveCells2, liveCells: liveCells1, true);
+
+            if (!shouldDie(liveNeibours))
+                liveCells2.Add(cell);
+        }
+
+        livingCells = liveCells2;
+
+        lastUsed2 = true;
 
 
 
     }
 
-    private int getAndUpdateNeibours(int cell, HashSet<int> temp, bool updateDead)
+    private int getAndUpdateNeibours(int cell, HashSet<int> temp, HashSet<int> liveCells, bool updateDead)
     {
         int live = 0;
 
@@ -174,7 +202,7 @@ public class GridWorldV2 : MonoBehaviour
             if (cellPos >= size1D || cell < 0)
                 return;
 
-            if (shouldBecomeAlive(getAndUpdateNeibours(cellPos, temp, false)))
+            if (shouldBecomeAlive(getAndUpdateNeibours(cellPos, temp, liveCells, false)))
             {
                 temp.Add(cellPos);
             }
